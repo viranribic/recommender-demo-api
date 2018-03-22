@@ -27,7 +27,7 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG')
+DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
@@ -148,6 +148,10 @@ REST_FRAMEWORK = {
 # Needed for CORS requests ( front and back end served from same domain, different port)
 CORS_ORIGIN_ALLOW_ALL = True
 
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
@@ -180,7 +184,6 @@ AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
-# Needed to setup
 
 # AWS file structure configuration
 AWS_LOCATION = 'static' # From the root of the AWS service, this is the path to which the static files will be stored on service
@@ -189,7 +192,8 @@ STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage' # The collectstatic executor storage engine
 DEFAULT_FILE_STORAGE = 'project.storage_backends.MediaStorage'
 
-
+# Activate Django-Heroku.
+django_heroku.settings(locals())
 
 
 
