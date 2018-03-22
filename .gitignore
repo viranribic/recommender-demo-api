@@ -1,5 +1,5 @@
 .env*
 .idea
-/venv
-/scripts/data
+venv
+scripts/data
 !/project/static
