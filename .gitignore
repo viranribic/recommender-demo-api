@@ -1,6 +1,5 @@
 .env*
 .idea
 project/static
-project/__pycache__/
 venv
 scripts/data
