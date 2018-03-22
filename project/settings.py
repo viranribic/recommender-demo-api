@@ -43,14 +43,17 @@ INSTALLED_APPS = [
     # Disable Django's own staticfiles handling in favour of WhiteNoise, for
     # greater consistency between gunicorn and `./manage.py runserver`. See:
     # http://whitenoise.evans.io/en/stable/django.html#using-whitenoise-in-development
-    'whitenoise.runserver_nostatic',
+    #'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'storages',     # Needed for AWS S3
+    'django_extensions',  # Needed for running django-jupyter notebooks
+    'rest_framework',
+    'corsheaders',  # Needed when calling API from same domain (CORS requests)
+    'app',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Added WhiteNoise middleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -131,27 +134,141 @@ USE_L10N = True
 USE_TZ = True
 
 
+# REST framework configuration
+
+LOGIN_REDIRECT_URL = '/api'
+import project.project_config as project_config
+
+REST_FRAMEWORK = {
+
+    'DEFAULT_PAGINATION_CLASS' : 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': project_config.GALLERY_IMG_NUM
+}
+
+# Needed for CORS requests ( front and back end served from same domain, different port)
+CORS_ORIGIN_ALLOW_ALL = True
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR,'project/static'),
+    os.path.join(BASE_DIR, 'static/'),
 ]
+# # Running ./manage.py collectstatic will go into /static/ as defined in STATICFILES_DIRS
+# # And collect all data to new STATIC_ROOT in /staticfiles/. It is
+# # possible to access that data from localhost:8000/static/v1/full/path/to/resource/only/file.txt.
+# # No half way paths are allowed.
+# STATIC_URL='/static/v1/'
+# STATIC_ROOT ='staticfiles/'
+
+if DEBUG:
+    # Media config
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = 'media/'
 
 # AWS S3 service configuration
 
+# Most importat part are the access keys ane secret
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME =config('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_CUSTOM_DOMAIN ='%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 
+AWS_QUERYSTRING_AUTH = False # This will make sure that the file URL does not have unnecessary parameters like your access key.
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
-AWS_LOCATION = 'static'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+# Needed to setup
 
+# AWS file structure configuration
+AWS_LOCATION = 'static' # From the root of the AWS service, this is the path to which the static files will be stored on service
+STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage' # The collectstatic executor storage engine
 DEFAULT_FILE_STORAGE = 'project.storage_backends.MediaStorage'
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#
+# # TODO change back to this after everything works
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+#
+
+
+
+
+
+# # TODO change back to this after everything works
+# # AWS_LOCATION = 'static'
+# # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# # STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+#
+# #static media settings
+# STATIC_URL = 'https://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
+# MEDIA_URL = STATIC_URL + 'media/'
+# ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+
+
+
+# # Static files (CSS, JavaScript, Images)
+# # https://docs.djangoproject.com/en/2.0/howto/static-files/
+#
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'project/static'),
+# ]
+#
+# STATICFILES_FINDERS = [
+# 'django.contrib.staticfiles.finders.FileSystemFinder',
+# 'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+# ]
+#
+#
+# # AWS S3 service configuration
+#
+# # TODO change back to this after everything works
+# # DEFAULT_FILE_STORAGE = 'project.storage_backends.MediaStorage'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+#
+# AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+# AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+# AWS_STORAGE_BUCKET_NAME =config('AWS_STORAGE_BUCKET_NAME')
+#
+# AWS_QUERYSTRING_AUTH = False # This will make sure that the file URL does not have unnecessary parameters like your access key.
+#
+# AWS_S3_CUSTOM_DOMAIN ='%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+#
+# AWS_S3_OBJECT_PARAMETERS = {
+#     'CacheControl': 'max-age=86400',
+# }
+#
+#
+# # TODO change back to this after everything works
+# # AWS_LOCATION = 'static'
+# # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# # STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+#
+# #static media settings
+# STATIC_URL = 'https://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
+# MEDIA_URL = STATIC_URL + 'media/'
+# ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'

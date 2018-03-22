@@ -15,7 +15,28 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url,include
+from rest_framework_jwt.views import obtain_jwt_token,verify_jwt_token
+from django.conf import settings
+from django.views.static import serve
+from django.conf.urls.static import  static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    url(r'^api-auth/', include('rest_framework.urls')),
+    url(r'^api-token-auth/', obtain_jwt_token),
+    url(r'^api-token-verify/', verify_jwt_token),
+    url(r'^api/', include('app.urls'))
 ]
+
+# Access local media root during development only
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # # Use this if you need a filesys interface in browser. Otherwise just serve files like above.
+    # urlpatterns += [
+    #     url(r'^media/(?P<path>.*)$',
+    #         serve,
+    #         {
+    #             'document_root': settings.MEDIA_ROOT,
+    #             'show_indexes':True}
+    #         )]
