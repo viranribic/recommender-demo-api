@@ -1,6 +1,6 @@
 .env*
 .idea
-!project/static
 project/static/**
+!project/static
 venv
 scripts/data
