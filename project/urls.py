@@ -20,8 +20,10 @@ from rest_framework_jwt.views import obtain_jwt_token,verify_jwt_token
 from django.conf import settings
 from django.views.static import serve
 from django.conf.urls.static import  static
+from app import views
 
 urlpatterns = [
+    url(r'^$', views.HomePageView.as_view()),
     path('admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api-token-auth/', obtain_jwt_token),

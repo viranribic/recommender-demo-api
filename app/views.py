@@ -1,6 +1,8 @@
 # Create your views here.
 
 # Common imports
+from django.shortcuts import render
+from django.views.generic import TemplateView
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -19,8 +21,14 @@ from app.serializers import ProfileSerializer
 # TODO move these to a seperate module
 import pickle as pckl
 import numpy as np
+import codecs
 from project.project_config import GALLERY_IMG_NUM
 
+def obj2pickled(obj):
+    return codecs.encode(pckl.dumps(obj), "base64").decode()
+
+def pickled2obj(pickled):
+    return pckl.loads(codecs.decode(pickled.encode(), "base64"))
 
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
@@ -55,10 +63,10 @@ class RecommendedImageViewSet(viewsets.ModelViewSet):
 
         profile = Profile.objects.filter(user_id=user.id).first()
 
-        pref_vec = pckl.loads(str(profile.pref_vec))
+        pref_vec = pickled2obj(profile.pref_vec)
         sim = []
         for img in images:
-            img_vec = pckl.loads(str(img.txt_vec))
+            img_vec = pickled2obj(img.txt_vec)
             similarity = np.arccos(np.dot(img_vec, pref_vec) / (np.linalg.norm(img_vec) * np.linalg.norm(pref_vec)))
             sim.append((img.id, similarity))
 
@@ -101,12 +109,12 @@ class ImageLike(APIView):
 
                     # update user preferences
                     profile = Profile.objects.filter(user_id=user.id).first()
-                    profile_vec = pckl.loads(str(profile.pref_vec))
-                    img_vec     = pckl.loads(str(image.txt_vec))
+                    profile_vec = pickled2obj(profile.pref_vec)
+                    img_vec     = pickled2obj(image.txt_vec)
 
                     profile_vec = ((profile_vec * profile.img_count) + img_vec) / (profile.img_count + 1 )
                     profile.img_count += 1
-                    profile.pref_vec = pckl.dumps(profile_vec)
+                    profile.pref_vec = obj2pickled(profile_vec)
                     profile.save()
 
                     # save like
@@ -119,13 +127,13 @@ class ImageLike(APIView):
 
                     # update user preferences
                     profile = Profile.objects.filter(user_id=user.id).first()
-                    profile_vec = pckl.loads(str(profile.pref_vec))
-                    img_vec = pckl.loads(str(result.img.txt_vec))
+                    profile_vec = pickled2obj(profile.pref_vec)
+                    img_vec = pickled2obj(result.img.txt_vec)
 
                     profile_vec = ((profile_vec * profile.img_count) - img_vec)
                     profile_vec = profile_vec if profile.img_count == 1 else profile_vec / (profile.img_count - 1)
                     profile.img_count -= 1
-                    profile.pref_vec = pckl.dumps(profile_vec)
+                    profile.pref_vec = obj2pickled(profile_vec)
                     profile.save()
 
                     result.delete()
@@ -133,7 +141,9 @@ class ImageLike(APIView):
             return Response({'message':'Like recorded successfuly.'}, status=status.HTTP_201_CREATED)
         return Response({'message':'Missing data. Provide "like" flag and image "id".'}, status=status.HTTP_400_BAD_REQUEST)
 
-
+class HomePageView(TemplateView):
+    def get(self, request, **kwargs):
+        return render(request, 'index.html', context=None)
 
 
 

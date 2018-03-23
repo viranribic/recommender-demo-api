@@ -53,6 +53,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -193,7 +195,8 @@ STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage' # The collectst
 DEFAULT_FILE_STORAGE = 'project.storage_backends.MediaStorage'
 
 # Activate Django-Heroku.
-django_heroku.settings(locals())
+# TODO this line messes up the S3 upload :/
+#django_heroku.settings(locals())
 
 
 
