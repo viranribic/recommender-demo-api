@@ -28,7 +28,8 @@ urlpatterns =[
     url(r'^image/recommended/$', image_recommended_list,name='image-details'),
     url(r'^image/liked/$', image_liked_list, name='image-details'),
     url(r'^image/like/$', ImageLike.as_view(), name='like-action'),
-    url(r'^register/$', UserRegister.as_view(), name='register'),
+    # TODO add email verification and finish signup
+    #url(r'^register/$', UserRegister.as_view(), name='register'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
