@@ -24,7 +24,7 @@ image_liked_list = LikedImageViewSet.as_view({
 })
 
 urlpatterns =[
-    url(r'^image/$', random_image_list, name='random-image-list'),
+    url(r'^image/random/$', random_image_list, name='random-image-list'),
     url(r'^image/recommended/$', image_recommended_list,name='image-details'),
     url(r'^image/liked/$', image_liked_list, name='image-details'),
     url(r'^image/like/$', ImageLike.as_view(), name='like-action'),
