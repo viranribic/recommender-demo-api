@@ -154,7 +154,7 @@ REST_FRAMEWORK = {
 # Needed for CORS requests ( front and back end served from same domain, different port)
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
-    'herokuapp.com',
+    '.herokuapp.com',
 )
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
