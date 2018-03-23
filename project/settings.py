@@ -44,11 +44,15 @@ INSTALLED_APPS = [
     # greater consistency between gunicorn and `./manage.py runserver`. See:
     # http://whitenoise.evans.io/en/stable/django.html#using-whitenoise-in-development
     #'whitenoise.runserver_nostatic',
-    'django.contrib.staticfiles',
+
+
+    'django.contrib.staticfiles', # TODO uncomment
+
+
     'storages',     # Needed for AWS S3
     'django_extensions',  # Needed for running django-jupyter notebooks
     'rest_framework',
-    'corsheaders',  # Needed when calling API from same domain (CORS requests)
+    'corsheaders',  # Needed when calling API from different domain (CORS requests)
     'app',
 ]
 
@@ -138,7 +142,7 @@ USE_TZ = True
 
 # REST framework configuration
 
-LOGIN_REDIRECT_URL = '/api'
+LOGIN_REDIRECT_URL = '/api' # TODO what's this?
 import project.project_config as project_config
 
 REST_FRAMEWORK = {
@@ -148,7 +152,12 @@ REST_FRAMEWORK = {
 }
 
 # Needed for CORS requests ( front and back end served from same domain, different port)
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = [
+    'localhost:8000',
+    'localhost:4200',
+    'herokuapp.com',
+]
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -161,12 +170,24 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static/'),
 ]
+
 # # Running ./manage.py collectstatic will go into /static/ as defined in STATICFILES_DIRS
 # # And collect all data to new STATIC_ROOT in /staticfiles/. It is
 # # possible to access that data from localhost:8000/static/v1/full/path/to/resource/only/file.txt.
 # # No half way paths are allowed.
 # STATIC_URL='/static/v1/'
 # STATIC_ROOT ='staticfiles/'
+
+# Also if you define STATICFILES_DIR & STATIC_URL or
+# STATIC_ROOT & STATIC_URL you can access the files from browser.
+# Third option is to remove 'django.contrib.staticfiles' from apps and
+# add the URL and ROOT manually to urls via static.
+
+
+# If you are fetching images from localhost keep this value.
+# If you're testing AWS storage, uncomment the other one.
+# STATIC_URL='/static/'
+#STATIC_ROOT ='static/'
 
 if DEBUG:
     # Media config
@@ -194,9 +215,9 @@ STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage' # The collectstatic executor storage engine
 DEFAULT_FILE_STORAGE = 'project.storage_backends.MediaStorage'
 
-# Activate Django-Heroku.
-# TODO this line messes up the S3 upload :/
-#django_heroku.settings(locals())
+# # Activate Django-Heroku.
+# # TODO this line messes up the S3 upload :/
+# #django_heroku.settings(locals())
 
 
 

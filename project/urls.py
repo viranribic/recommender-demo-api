@@ -28,17 +28,24 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^api-token-auth/', obtain_jwt_token),
     url(r'^api-token-verify/', verify_jwt_token),
-    url(r'^api/', include('app.urls'))
+    url(r'^api/', include('app.urls')),
 ]
+
 
 # Access local media root during development only
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    # # Use this if you need a filesys interface in browser. Otherwise just serve files like above.
+    # Add to serve files in 'media/'
+    #urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    # Add to explicitly serve files in 'static/'
+    #urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+    # Use this if you need a file explorer interface in browser. Otherwise just serve files like above.
     # urlpatterns += [
-    #     url(r'^media/(?P<path>.*)$',
+    #     url(r'^static/(?P<path>.*)$',
     #         serve,
     #         {
     #             'document_root': settings.MEDIA_ROOT,
     #             'show_indexes':True}
     #         )]
+    pass
