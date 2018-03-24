@@ -146,7 +146,6 @@ USE_TZ = True
 import project.project_config as project_config
 
 REST_FRAMEWORK = {
-
     'DEFAULT_PAGINATION_CLASS' : 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': project_config.GALLERY_IMG_NUM
 }
@@ -165,9 +164,11 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
+# Uncomment when using AWS storage
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static/'),
 ]
+
 
 # # Running ./manage.py collectstatic will go into /static/ as defined in STATICFILES_DIRS
 # # And collect all data to new STATIC_ROOT in /staticfiles/. It is
@@ -181,11 +182,11 @@ STATICFILES_DIRS = [
 # Third option is to remove 'django.contrib.staticfiles' from apps and
 # add the URL and ROOT manually to urls via static.
 
-
 # If you are fetching images from localhost keep this value.
 # If you're testing AWS storage, uncomment the other one.
 # STATIC_URL='/static/'
-#STATIC_ROOT ='static/'
+# STATIC_ROOT ='static/'
+
 
 if DEBUG:
     # Media config
@@ -216,85 +217,3 @@ DEFAULT_FILE_STORAGE = 'project.storage_backends.MediaStorage'
 # # Activate Django-Heroku.
 # # TODO this line messes up the S3 upload :/
 # #django_heroku.settings(locals())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#
-# # TODO change back to this after everything works
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-#
-
-
-
-
-
-# # TODO change back to this after everything works
-# # AWS_LOCATION = 'static'
-# # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# # STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
-#
-# #static media settings
-# STATIC_URL = 'https://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
-# MEDIA_URL = STATIC_URL + 'media/'
-# ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
-
-
-
-# # Static files (CSS, JavaScript, Images)
-# # https://docs.djangoproject.com/en/2.0/howto/static-files/
-#
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'project/static'),
-# ]
-#
-# STATICFILES_FINDERS = [
-# 'django.contrib.staticfiles.finders.FileSystemFinder',
-# 'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-# ]
-#
-#
-# # AWS S3 service configuration
-#
-# # TODO change back to this after everything works
-# # DEFAULT_FILE_STORAGE = 'project.storage_backends.MediaStorage'
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-#
-# AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
-# AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-# AWS_STORAGE_BUCKET_NAME =config('AWS_STORAGE_BUCKET_NAME')
-#
-# AWS_QUERYSTRING_AUTH = False # This will make sure that the file URL does not have unnecessary parameters like your access key.
-#
-# AWS_S3_CUSTOM_DOMAIN ='%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-#
-# AWS_S3_OBJECT_PARAMETERS = {
-#     'CacheControl': 'max-age=86400',
-# }
-#
-#
-# # TODO change back to this after everything works
-# # AWS_LOCATION = 'static'
-# # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# # STATIC_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
-#
-# #static media settings
-# STATIC_URL = 'https://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
-# MEDIA_URL = STATIC_URL + 'media/'
-# ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'

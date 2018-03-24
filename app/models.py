@@ -4,13 +4,13 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from project.project_config import deafult_user_pref_vec
+from project.project_config import empty_embed_vec, obj2pickled
 
 # Create your models here.
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    pref_vec = models.TextField(default= deafult_user_pref_vec())
+    pref_vec = models.TextField(default= obj2pickled(empty_embed_vec()))
     img_count = models.IntegerField(default=0)
 
     def __str__(self):

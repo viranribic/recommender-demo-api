@@ -22,13 +22,8 @@ from app.serializers import ProfileSerializer
 import pickle as pckl
 import numpy as np
 import codecs
-from project.project_config import GALLERY_IMG_NUM
-
-def obj2pickled(obj):
-    return codecs.encode(pckl.dumps(obj), "base64").decode()
-
-def pickled2obj(pickled):
-    return pckl.loads(codecs.decode(pickled.encode(), "base64"))
+from project.project_config import GALLERY_IMG_NUM, empty_embed_vec, find_similar
+from project.project_config import pickled2obj, obj2pickled
 
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
@@ -58,22 +53,39 @@ class RecommendedImageViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         images = Image.objects.all().exclude(id__in=LikedImages.objects.filter(user=user).values_list('img', flat=True))
+        liked_images = Image.objects.all().filter(id__in=LikedImages.objects.filter(user=user).values_list('img', flat=True))
+
         if len(images) == 0:
             return images
 
-        profile = Profile.objects.filter(user_id=user.id).first()
+        total_liked_count = len(liked_images)
+        # From liked images extract the number of classes and mean vec for each label
+        usr_class_emb = {}
+        for image in liked_images:
+            if image.label not in usr_class_emb:
+                class_emb = {'vec': empty_embed_vec(), 'count': 0}
+            else:
+                class_emb = usr_class_emb[image.label]
+            class_emb['vec'] += pickled2obj(image.txt_vec)
+            class_emb['count'] += 1
+            usr_class_emb[image.label] = class_emb
 
-        pref_vec = pickled2obj(profile.pref_vec)
-        sim = []
-        for img in images:
-            img_vec = pickled2obj(img.txt_vec)
-            similarity = np.arccos(np.dot(img_vec, pref_vec) / (np.linalg.norm(img_vec) * np.linalg.norm(pref_vec)))
-            sim.append((img.id, similarity))
+        for val in usr_class_emb.values():
+            val['vec'] /= val['count']
 
-        sim.sort(key=lambda tup: tup[1])
-        indices = map(lambda rec: rec[0], sim[:GALLERY_IMG_NUM])
+        # Fetch k similar for each class and then
+        output_images_indices = []
+        class_count = len(usr_class_emb)
+        for val in usr_class_emb.values():
+            class_count -= 1
+            pref_vec = val['vec']
+            sim_img_count = round(val['count'] / total_liked_count * GALLERY_IMG_NUM)
+            if class_count is 0:
+                sim_img_count = GALLERY_IMG_NUM - len(output_images_indices )
+            sim_image_indices = find_similar(pref_vec, images, sim_img_count)
+            output_images_indices += sim_image_indices
 
-        return Image.objects.filter(id__in = indices)
+        return Image.objects.filter(id__in = output_images_indices)
 
 class ProfileViewSet(viewsets.ReadOnlyModelViewSet):
     # TODO restrict user acces with permissions
