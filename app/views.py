@@ -56,7 +56,7 @@ class RecommendedImageViewSet(viewsets.ModelViewSet):
         liked_images = Image.objects.all().filter(id__in=LikedImages.objects.filter(user=user).values_list('img', flat=True))
 
         if len(images) == 0:
-            return images
+            return Image.objects.all()
 
         total_liked_count = len(liked_images)
         # From liked images extract the number of classes and mean vec for each label
@@ -85,6 +85,8 @@ class RecommendedImageViewSet(viewsets.ModelViewSet):
             sim_image_indices = find_similar(pref_vec, images, sim_img_count)
             output_images_indices += sim_image_indices
 
+        if len(output_images_indices) is 0:
+            return Image.objects.all()
         return Image.objects.filter(id__in = output_images_indices)
 
 class ProfileViewSet(viewsets.ReadOnlyModelViewSet):
