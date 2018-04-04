@@ -1,6 +1,7 @@
 # Create your views here.
 
 # Common imports
+from django.db.models import QuerySet
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from rest_framework import viewsets, status
@@ -44,7 +45,12 @@ class LikedImageViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Image.objects.filter(id__in = LikedImages.objects.filter(user=user).values_list('img', flat=True))
+        liked_images = Image.objects.filter(id__in = LikedImages.objects.filter(user=user).values_list('img', flat=True))
+        if len(liked_images) is not 0:
+            return liked_images
+        else:
+            warning_images = QuerySet(Image(-1, 'static/img/no_images.jpg',-1,empty_embed_vec()))
+            return warning_images # Here return an image object in list
 
 class RecommendedImageViewSet(viewsets.ModelViewSet):
     serializer_class = UnlikedImageSerializer
@@ -55,8 +61,10 @@ class RecommendedImageViewSet(viewsets.ModelViewSet):
         images = Image.objects.all().exclude(id__in=LikedImages.objects.filter(user=user).values_list('img', flat=True))
         liked_images = Image.objects.all().filter(id__in=LikedImages.objects.filter(user=user).values_list('img', flat=True))
 
-        if len(images) == 0:
-            return Image.objects.all()
+        if len(liked_images) is 0:
+            warning_images = QuerySet(Image(-1, 'static/img/no_images.jpg',-1,empty_embed_vec()))
+            return warning_images # Here return an image object in list
+
 
         total_liked_count = len(liked_images)
         # From liked images extract the number of classes and mean vec for each label
@@ -122,14 +130,14 @@ class ImageLike(APIView):
                     image = Image.objects.filter(id=img_id).first()
 
                     # update user preferences
-                    profile = Profile.objects.filter(user_id=user.id).first()
-                    profile_vec = pickled2obj(profile.pref_vec)
-                    img_vec     = pickled2obj(image.txt_vec)
+                    #profile = Profile.objects.filter(user_id=user.id).first()
+                    #profile_vec = pickled2obj(profile.pref_vec)
+                    #img_vec     = pickled2obj(image.txt_vec)
 
-                    profile_vec = ((profile_vec * profile.img_count) + img_vec) / (profile.img_count + 1 )
-                    profile.img_count += 1
-                    profile.pref_vec = obj2pickled(profile_vec)
-                    profile.save()
+                    #profile_vec = ((profile_vec * profile.img_count) + img_vec) / (profile.img_count + 1 )
+                    #profile.img_count += 1
+                    #profile.pref_vec = obj2pickled(profile_vec)
+                    #profile.save()
 
                     # save like
                     li = LikedImages(user=user, img=image)
@@ -140,15 +148,15 @@ class ImageLike(APIView):
                     result = query_res.first()
 
                     # update user preferences
-                    profile = Profile.objects.filter(user_id=user.id).first()
-                    profile_vec = pickled2obj(profile.pref_vec)
-                    img_vec = pickled2obj(result.img.txt_vec)
+                    #profile = Profile.objects.filter(user_id=user.id).first()
+                    #profile_vec = pickled2obj(profile.pref_vec)
+                    #img_vec = pickled2obj(result.img.txt_vec)
 
-                    profile_vec = ((profile_vec * profile.img_count) - img_vec)
-                    profile_vec = profile_vec if profile.img_count == 1 else profile_vec / (profile.img_count - 1)
-                    profile.img_count -= 1
-                    profile.pref_vec = obj2pickled(profile_vec)
-                    profile.save()
+                    #profile_vec = ((profile_vec * profile.img_count) - img_vec)
+                    #profile_vec = profile_vec if profile.img_count == 1 else profile_vec / (profile.img_count - 1)
+                    #profile.img_count -= 1
+                    #profile.pref_vec = obj2pickled(profile_vec)
+                    #profile.save()
 
                     result.delete()
 
