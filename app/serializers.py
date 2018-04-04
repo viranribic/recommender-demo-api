@@ -21,7 +21,7 @@ class ImageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Image
         fields = ('id','path','label')
-        ordering = ['-id']
+        ordering = ('id',)
 
 class LikedImageSerializer(serializers.HyperlinkedModelSerializer):
     liked = serializers.SerializerMethodField('liked_init')
@@ -33,7 +33,7 @@ class LikedImageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Image
         fields = ('id', 'path', 'label', 'liked')
-        ordering = ['-id']
+        ordering = ('id',)
 
 class UnlikedImageSerializer(serializers.HyperlinkedModelSerializer):
     liked = serializers.SerializerMethodField('liked_init')
@@ -45,4 +45,4 @@ class UnlikedImageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Image
         fields = ('id', 'path', 'label', 'liked')
-        ordering = ['-id']
+        ordering = ('-id',)

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
-
+import datetime
 import os
 import django_heroku
 import dj_database_url
@@ -148,6 +148,11 @@ import project.project_config as project_config
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS' : 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': project_config.GALLERY_IMG_NUM
+}
+
+
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=60*30) # 30 minutes of token time
 }
 
 # Needed for CORS requests ( front and back end served from same domain, different port)
