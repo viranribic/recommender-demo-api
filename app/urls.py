@@ -3,7 +3,7 @@ from rest_framework import renderers
 
 from . import views
 from rest_framework.urlpatterns import format_suffix_patterns
-from app.views import ImageViewSet, LikedImageViewSet, RecommendedImageViewSet, RandomImageViewSet
+from app.views import ImageViewSet, LikedImageViewSet, RecommendedImageViewSet, RandomImageViewSet, ErrorImageInfo
 from app.views import UserRegister,ImageLike
 
 image_list = ImageViewSet.as_view({
@@ -28,6 +28,8 @@ urlpatterns =[
     url(r'^image/recommended/$', image_recommended_list,name='image-details'),
     url(r'^image/liked/$', image_liked_list, name='image-details'),
     url(r'^image/action/like/$', ImageLike.as_view(), name='like-action'),
+    url(r'^error/info/$', ErrorImageInfo.as_view(), name='like-action'),
+
     # TODO add email verification and finish signup
     #url(r'^register/$', UserRegister.as_view(), name='register'),
 ]

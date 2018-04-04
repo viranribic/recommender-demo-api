@@ -49,8 +49,7 @@ class LikedImageViewSet(viewsets.ModelViewSet):
         if len(liked_images) is not 0:
             return liked_images
         else:
-            warning_images = QuerySet(Image(-1, 'static/img/no_images.jpg',-1,empty_embed_vec()))
-            return warning_images # Here return an image object in list
+            return Image.objects.none()
 
 class RecommendedImageViewSet(viewsets.ModelViewSet):
     serializer_class = UnlikedImageSerializer
@@ -62,8 +61,7 @@ class RecommendedImageViewSet(viewsets.ModelViewSet):
         liked_images = Image.objects.all().filter(id__in=LikedImages.objects.filter(user=user).values_list('img', flat=True))
 
         if len(liked_images) is 0:
-            warning_images = QuerySet(Image(-1, 'static/img/no_images.jpg',-1,empty_embed_vec()))
-            return warning_images # Here return an image object in list
+            return Image.objects.none() # Here return an image object in list
 
 
         total_liked_count = len(liked_images)
@@ -94,7 +92,7 @@ class RecommendedImageViewSet(viewsets.ModelViewSet):
             output_images_indices += sim_image_indices
 
         if len(output_images_indices) is 0:
-            return Image.objects.all()
+            return Image.objects.none()
         return Image.objects.filter(id__in = output_images_indices)
 
 class ProfileViewSet(viewsets.ReadOnlyModelViewSet):
@@ -163,11 +161,12 @@ class ImageLike(APIView):
             return Response({'message':'Like recorded successfuly.'}, status=status.HTTP_201_CREATED)
         return Response({'message':'Missing data. Provide "like" flag and image "id".'}, status=status.HTTP_400_BAD_REQUEST)
 
-class HomePageView(TemplateView):
-    def get(self, request, **kwargs):
-        return render(request, 'index.html', context=None)
 
+class ErrorImageInfo(APIView):
+    authentication_classes = (JSONWebTokenAuthentication,SessionAuthentication,BasicAuthentication)
 
+    def get(self, request, format=None):
+        return Response({'path':'static/img/no_images.jpg'}, status=status.HTTP_200_OK)
 
 
 
