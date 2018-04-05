@@ -31,7 +31,7 @@ urlpatterns =[
     url(r'^error/info/$', ErrorImageInfo.as_view(), name='like-action'),
 
     # TODO add email verification and finish signup
-    #url(r'^register/$', UserRegister.as_view(), name='register'),
+    url(r'^register/$', UserRegister.as_view(), name='register'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
