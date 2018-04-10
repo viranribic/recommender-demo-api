@@ -23,8 +23,8 @@ from app.serializers import ProfileSerializer
 import pickle as pckl
 import numpy as np
 import codecs
-from project.project_config import GALLERY_IMG_NUM, empty_embed_vec, find_similar
-from project.project_config import pickled2obj, obj2pickled
+from project.server_util import GALLERY_IMG_NUM, empty_embed_vec, find_similar
+from project.server_util import pickled2obj, obj2pickled
 
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()

@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from project.project_config import empty_embed_vec, obj2pickled
+from project.server_util import empty_embed_vec, obj2pickled
 
 # Create your models here.
 

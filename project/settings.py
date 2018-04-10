@@ -143,7 +143,7 @@ USE_TZ = True
 # REST framework configuration
 
 #LOGIN_REDIRECT_URL = '/api' # TODO what's this?
-import project.project_config as project_config
+import project.server_util as project_config
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS' : 'rest_framework.pagination.PageNumberPagination',
