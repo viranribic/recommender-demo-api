@@ -82,13 +82,13 @@ class RecommendedImageViewSet(viewsets.ModelViewSet):
         # Fetch k similar for each class and then
         output_images_indices = []
         class_count = len(usr_class_emb)
-        for val in usr_class_emb.values():
+        for label, record in usr_class_emb.items():
             class_count -= 1
-            pref_vec = val['vec']
-            sim_img_count = round(val['count'] / total_liked_count * GALLERY_IMG_NUM)
+            pref_vec = record['vec']
+            sim_img_count = round(record['count'] / total_liked_count * GALLERY_IMG_NUM)
             if class_count is 0:
                 sim_img_count = GALLERY_IMG_NUM - len(output_images_indices )
-            sim_image_indices = find_similar(pref_vec, images, sim_img_count)
+            sim_image_indices = find_similar(pref_vec, images.filter(label=label), sim_img_count)
             output_images_indices += sim_image_indices
 
         if len(output_images_indices) is 0:
