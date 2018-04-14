@@ -5,7 +5,6 @@ Repozitorij za back-end sustava za preporučavanje slika na temelju njihovog sad
 Razvijani sustav se sastoji od [SPA](https://en.wikipedia.org/wiki/Single-page_application "Single Page Application") klijenta,
 [REST API](https://en.wikipedia.org/wiki/Representational_state_transfer "Representational state transfer") poslužitelja i [AWS S3](https://aws.amazon.com/s3/ "Amazon Web Services Simple Storage Service") usluge za pohranu i posluživanje podataka.
 
-
 ## Struktura projekta
  
  Struktura bitnih datoteka projekta prikazana je u nastavku: 
@@ -113,4 +112,4 @@ Repozitorij front-end koda aplikacije : [link](https://github.com/vribic/recomme
 
 Repozitorij teksta rada : [link](https://github.com/Mungosin/Rektorova)
 
-Link na web aplikaciju posluženu na Heroku platformi : [demo aplikaicije]().
+Link na web aplikaciju posluženu na Heroku platformi : [demo aplikaicije](https://recommender-demo.herokuapp.com/login).
