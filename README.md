@@ -112,4 +112,4 @@ Repozitorij front-end koda aplikacije : [link](https://github.com/vribic/recomme
 
 Repozitorij teksta rada : [link](https://github.com/Mungosin/Rektorova)
 
-Link na web aplikaciju posluženu na Heroku platformi : [demo aplikaicije](https://recommender-demo.herokuapp.com/login).
+Link na web aplikaciju posluženu na Heroku platformi : [demo aplikaicije](https://recommender-demo.herokuapp.com).
