@@ -22,7 +22,7 @@ django-extensions==2.0.6
 django-heroku==0.3.1
 django-storages==1.6.5
 django-toolbelt==0.0.1
-djangorestframework==3.7.7
+djangorestframework==3.11.2
 djangorestframework-jwt==1.11.0
 docutils==0.14
 easy-thumbnails==2.4.2
